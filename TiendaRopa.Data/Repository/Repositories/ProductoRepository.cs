@@ -16,6 +16,7 @@ namespace TiendaRopa.Data.Repository.Repositories
             var productoBD = _db.Productos.FirstOrDefault(p => p.Id == producto.Id);
             if(productoBD != null)
             {
+                productoBD.Nombre = producto.Nombre;
                 productoBD.Talla = producto.Talla;
                 productoBD.Color = producto.Color;
                 productoBD.Precio = producto.Precio;

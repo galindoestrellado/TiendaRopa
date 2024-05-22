@@ -6,6 +6,9 @@ namespace TiendaRopa.Models
     {
         [Key]
         public int Id { get; set; }
+        [Required(ErrorMessage = "Nombre obligatoria")]
+        [StringLength(30, ErrorMessage = "El nombre no puede tener más de 30 caracteres.")]
+        public string Nombre { get; set; }
         [Required(ErrorMessage = "Talla obligatoria")]
         [Range(1, 10, ErrorMessage = "Talla debe estar en el rango 1-10")]
         public int Talla { get; set; }
