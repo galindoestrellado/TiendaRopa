@@ -17,7 +17,7 @@ namespace TiendaRopa.Data.Data
         {
         }
 
-        public DbSet<Producto> Bodegas { get; set; }
+        public DbSet<Producto> Productos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
