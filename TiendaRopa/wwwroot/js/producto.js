@@ -7,9 +7,9 @@ $(document).ready(function () {
 function loadDataTable() {
     datatable = $('#tblDatos').DataTable({
         "language": {
-            "lengthMenu": "Mostrar _MENU_ Registros Por Pagina",
+            "lengthMenu": "Mostrar _MENU_ Productos Por Pagina",
             "zeroRecords": "Ningun Registro",
-            "info": "Mostrar page _PAGE_ de _PAGES_",
+            "info": "Mostrar pagina _PAGE_ de _PAGES_",
             "infoEmpty": "no hay registros",
             "infoFiltered": "(filtered from _MAX_ total registros)",
             "search": "Buscar",
@@ -49,8 +49,9 @@ function loadDataTable() {
                         `;
                 }, "width": "20%"
             }
-        ]
-
+        ],
+        "lengthMenu": [[2, 5, 10, 25, 100], [2, 5, 10, 25, 100]],
+        "pageLength": 2
     });
 }
 

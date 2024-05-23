@@ -54,16 +54,17 @@ namespace TiendaRopa.Controllers
                 if (producto.Id == 0)
                 {
                     await _unitWork.Producto.Add(producto);
+                    await _unitWork.Save();
+                    return RedirectToAction("Index"); // Redirigir después de agregar un nuevo producto
                 }
                 else
                 {
                     var objProducto = await _unitWork.Producto.GetById(producto.Id);
                     _unitWork.Producto.Update(producto);
+                    await _unitWork.Save();
                 }
-                await _unitWork.Save();
-                return View("Index");
             }
-            return View(producto);
+            return RedirectToAction("Index");
         }
 
         [HttpPost]

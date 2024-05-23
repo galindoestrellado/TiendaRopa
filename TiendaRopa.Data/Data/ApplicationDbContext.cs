@@ -10,7 +10,7 @@ using TiendaRopa.Models;
 
 namespace TiendaRopa.Data.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
