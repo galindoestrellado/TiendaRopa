@@ -30,14 +30,13 @@ namespace TiendaRopa.Controllers
         public async Task<IActionResult> Upsert(int? id)
         {
 
-            Producto producto = new Producto();
             if (id == null)
             {
-                return View(producto);
+                return View(new Producto());
             }
             else
             {
-                producto = await _unitWork.Producto.GetById(id.GetValueOrDefault());
+                Producto producto = await _unitWork.Producto.GetById(id.GetValueOrDefault());
                 if (producto == null)
                 {
                     return NotFound();
@@ -49,22 +48,27 @@ namespace TiendaRopa.Controllers
         [HttpPost]
         public async Task<IActionResult> Upsert(Producto producto)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                if (producto.Id == 0)
-                {
-                    await _unitWork.Producto.Add(producto);
-                    await _unitWork.Save();
-                    return RedirectToAction("Index"); // Redirigir después de agregar un nuevo producto
-                }
-                else
-                {
-                    var objProducto = await _unitWork.Producto.GetById(producto.Id);
-                    _unitWork.Producto.Update(producto);
-                    await _unitWork.Save();
-                }
+                return View(producto);
             }
-            return RedirectToAction("Index");
+
+            if (producto.Id == 0)
+            {
+                await _unitWork.Producto.Add(producto);
+            }
+            else
+            {
+                var existingProducto = await _unitWork.Producto.GetById(producto.Id);
+                if (existingProducto == null)
+                {
+                    return NotFound();
+                }
+                _unitWork.Producto.Update(producto);
+            }
+
+            await _unitWork.Save();
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
