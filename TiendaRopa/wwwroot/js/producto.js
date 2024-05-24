@@ -29,9 +29,10 @@ function loadDataTable() {
             { "data": "talla" },
             { "data": "color" },
             {
-                "data": "precio", "className": "text-end", "render": function (data) {
-                    var d = data.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
-                    return d;
+                "data": "precio", "className": "text-end", "targets": 5, "render": function (data) {
+                    var price = parseFloat(data);
+                    var formattedNumber = price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    return formattedNumber + " \u20AC";
                 },
             },
             {
@@ -39,7 +40,7 @@ function loadDataTable() {
                 "render": function (data) {
                     return `
                             <div class="text-center">
-                                <a href="/Producto/Upsert/${data}" class="btn btn-success text-white" style="cursor:pointer">
+                                <a href="/Producto/Update/${data}" class="btn btn-success text-white" style="cursor:pointer">
                                     <i class="bi bi-pencil-square"></i>
                                 <a/>
                                 <a onclick=Delete("/Producto/Delete/${data}") class="btn btn-danger text-white" style="cursor: pointer">
@@ -50,8 +51,8 @@ function loadDataTable() {
                 }, "width": "20%"
             }
         ],
-        "lengthMenu": [[2, 5, 10, 25, 100], [2, 5, 10, 25, 100]],
-        "pageLength": 2
+        "lengthMenu": [[3, 5, 10, 25, 100], [3, 5, 10, 25, 100]],
+        "pageLength": 3
     });
 }
 
@@ -79,4 +80,47 @@ function Delete(url) {
             })
         }
     });
+}
+
+
+function Upsert() {
+    var producto = GetProductoForm();
+    var url = "/Producto/Insert";
+    if (producto.Id != null && producto.Id != 0)
+        url = "/Producto/Update";
+    var options = {
+        contentType: "application/json; charset=utf-8",
+        url: url,
+        data: JSON.stringify(producto),
+        type: "post",
+        datatype: "json",
+        success: function (result) {
+            if (result.success) {
+                toastr.success(result.message);
+                setTimeout(function () {
+                    window.location.href = "/Producto/Index";
+                }, 1000);
+            }
+            else {
+                toastr.error(result.message);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.log(error);
+        }
+    };
+
+    $.ajax(options);
+}
+
+function GetProductoForm() {
+    var producto = {
+        Id: $("#Id").val(),
+        Nombre: $("#Nombre").val(),
+        Descripcion: $("#Descripcion").val(),
+        Talla: $("#Talla").val(),
+        Color: $("#Color").val(),
+        Precio: $("#precioInput").val()
+    };
+    return producto;
 }

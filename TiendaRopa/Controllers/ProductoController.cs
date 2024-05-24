@@ -27,48 +27,54 @@ namespace TiendaRopa.Controllers
             return Json(new { data = all });
         }
 
-        public async Task<IActionResult> Upsert(int? id)
+        public IActionResult Insert()
         {
-
-            if (id == null)
-            {
-                return View(new Producto());
-            }
-            else
-            {
-                Producto producto = await _unitWork.Producto.GetById(id.GetValueOrDefault());
-                if (producto == null)
-                {
-                    return NotFound();
-                }
-                return View(producto);
-            }
+            return View(new Producto());
         }
 
         [HttpPost]
-        public async Task<IActionResult> Upsert(Producto producto)
+        public async Task<IActionResult> Insert([FromBody] Producto producto)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View(producto);
+                if (producto != null)
+                {
+                    await _unitWork.Producto.Add(producto);
+                    await _unitWork.Save();
+                    return Json(new { success = true, message = "Producto creado correctamente" });
+                }
             }
+            return Json(new { success = false, message = "Error al crear Producto" });
 
-            if (producto.Id == 0)
+        }
+
+        public async Task<IActionResult> Update(int? id)
+        {
+            if (id != null)
             {
-                await _unitWork.Producto.Add(producto);
+                Producto producto = await _unitWork.Producto.GetById(id.GetValueOrDefault());
+                if (producto != null)
+                {
+                    return View(producto);
+                }
             }
-            else
+            return BadRequest();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Update([FromBody] Producto producto)
+        {
+            if (ModelState.IsValid)
             {
                 var existingProducto = await _unitWork.Producto.GetById(producto.Id);
-                if (existingProducto == null)
+                if (existingProducto != null)
                 {
-                    return NotFound();
+                    _unitWork.Producto.Update(producto);
+                    await _unitWork.Save();
+                    return Json(new { success = true, message = "Producto actualizado correctamente" });
                 }
-                _unitWork.Producto.Update(producto);
             }
-
-            await _unitWork.Save();
-            return RedirectToAction(nameof(Index));
+            return Json(new { success = false, message = "Error al crear Producto" });
         }
 
         [HttpPost]

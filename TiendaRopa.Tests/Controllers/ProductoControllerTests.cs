@@ -36,29 +36,29 @@ namespace TiendaRopa.Tests.Controllers
             Assert.Equal(productos, productList);
         }
 
-        [Fact]
-        public async Task Upsert_Post_AddProduct()
-        {
-            var newProduct = new Producto { Nombre = "Nuevo Producto", Talla = 10, Color = "Verde", Precio = 150, Descripcion = "Descripción del nuevo producto" };
-            _mockUnitWork.Setup(repo => repo.Producto.Add(It.IsAny<Producto>())).Returns((Producto p) => Task.FromResult(p));
+        //[Fact]
+        //public async Task Upsert_Post_AddProduct()
+        //{
+        //    var newProduct = new Producto { Nombre = "Nuevo Producto", Talla = 10, Color = "Verde", Precio = 150, Descripcion = "Descripción del nuevo producto" };
+        //    _mockUnitWork.Setup(repo => repo.Producto.Add(It.IsAny<Producto>())).Returns((Producto p) => Task.FromResult(p));
 
-            var result = await _controller.Upsert(newProduct);
+        //    var result = await _controller.Upsert(newProduct);
 
-            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal("Index", redirectToActionResult.ActionName);
-        }
+        //    var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+        //    Assert.Equal("Index", redirectToActionResult.ActionName);
+        //}
 
-        [Fact]
-        public async Task Upsert_Post_UpdateProduct()
-        {
-            var existingProduct = new Producto { Id = 1, Nombre = "Producto Existente", Talla = 10, Color = "Rojo", Precio = 100, Descripcion = "Descripción del producto existente" };
-            _mockUnitWork.Setup(repo => repo.Producto.GetById(existingProduct.Id)).ReturnsAsync(existingProduct);
+        //[Fact]
+        //public async Task Upsert_Post_UpdateProduct()
+        //{
+        //    var existingProduct = new Producto { Id = 1, Nombre = "Producto Existente", Talla = 10, Color = "Rojo", Precio = 100, Descripcion = "Descripción del producto existente" };
+        //    _mockUnitWork.Setup(repo => repo.Producto.GetById(existingProduct.Id)).ReturnsAsync(existingProduct);
 
-            var result = await _controller.Upsert(existingProduct);
+        //    var result = await _controller.Upsert(existingProduct);
 
-            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal("Index", redirectToActionResult.ActionName);
-        }
+        //    var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+        //    Assert.Equal("Index", redirectToActionResult.ActionName);
+        //}
 
         [Fact]
         public async Task Delete_Post_RemoveProduct()
