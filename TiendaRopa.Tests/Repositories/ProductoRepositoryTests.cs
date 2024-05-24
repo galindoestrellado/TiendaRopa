@@ -9,11 +9,9 @@ namespace TiendaRopa.Tests.Repositories
 {
     public class ProductoRepositoryTests
     {
-
         private readonly Mock<IUnitWork> _mockUnitWork;
         private readonly ApplicationDbContext _context;
         private readonly DbContextOptions<ApplicationDbContext> _options;
-
 
         public ProductoRepositoryTests()
         {

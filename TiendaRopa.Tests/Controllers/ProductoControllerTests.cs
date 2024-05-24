@@ -22,7 +22,7 @@ namespace TiendaRopa.Tests.Controllers
         {
             var productos = new List<Producto>
             {
-                new Producto { Id = 1, Talla = 10, Color = "Rojo", Precio = 100, Descripcion = "Producto 1", Nombre = "Gorro" }
+                new Producto { Id = 1, Nombre = "Camiseta", Talla = 10, Color = "Rojo", Precio = 100, Descripcion = "Camiseta de tirantes" }
             };
             _mockUnitWork.Setup(repo => repo.Producto.GetAll()).ReturnsAsync(productos);
 
@@ -36,34 +36,46 @@ namespace TiendaRopa.Tests.Controllers
             Assert.Equal(productos, productList);
         }
 
-        //[Fact]
-        //public async Task Upsert_Post_AddProduct()
-        //{
-        //    var newProduct = new Producto { Nombre = "Nuevo Producto", Talla = 10, Color = "Verde", Precio = 150, Descripcion = "Descripción del nuevo producto" };
-        //    _mockUnitWork.Setup(repo => repo.Producto.Add(It.IsAny<Producto>())).Returns((Producto p) => Task.FromResult(p));
+        [Fact]
+        public async Task Insert_AddProduct()
+        {
+            var newProduct = new Producto { Id = 1, Nombre = "Camiseta", Talla = 10, Color = "Rojo", Precio = 100, Descripcion = "Camiseta de tirantes" };
+            _mockUnitWork.Setup(repo => repo.Producto.Add(It.IsAny<Producto>())).Returns(Task.CompletedTask);
 
-        //    var result = await _controller.Upsert(newProduct);
+            var result = await _controller.Insert(newProduct);
 
-        //    var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
-        //    Assert.Equal("Index", redirectToActionResult.ActionName);
-        //}
-
-        //[Fact]
-        //public async Task Upsert_Post_UpdateProduct()
-        //{
-        //    var existingProduct = new Producto { Id = 1, Nombre = "Producto Existente", Talla = 10, Color = "Rojo", Precio = 100, Descripcion = "Descripción del producto existente" };
-        //    _mockUnitWork.Setup(repo => repo.Producto.GetById(existingProduct.Id)).ReturnsAsync(existingProduct);
-
-        //    var result = await _controller.Upsert(existingProduct);
-
-        //    var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
-        //    Assert.Equal("Index", redirectToActionResult.ActionName);
-        //}
+            var jsonResult = Assert.IsType<JsonResult>(result);
+            var jsonValue = jsonResult.Value;
+            var successProperty = jsonValue.GetType().GetProperty("success");
+            var successValue = successProperty.GetValue(jsonValue, null);
+            Assert.True((bool)successValue);
+        }
 
         [Fact]
-        public async Task Delete_Post_RemoveProduct()
+        public async Task Update_ProductoUpdated()
         {
-            var productToDelete = new Producto { Id = 1, Nombre = "Producto a Eliminar", Talla = 10, Color = "Rojo", Precio = 100, Descripcion = "Descripción del producto a eliminar" };
+            var existingProducto = new Producto { Id = 1, Nombre = "Camiseta", Talla = 10, Color = "Rojo", Precio = 100, Descripcion = "Camiseta de tirantes" };
+
+            _mockUnitWork.Setup(repo => repo.Producto.GetById(existingProducto.Id)).ReturnsAsync(existingProducto);
+            _mockUnitWork.Setup(repo => repo.Producto.Update(It.IsAny<Producto>())).Verifiable();
+            _mockUnitWork.Setup(repo => repo.Save()).Returns(Task.CompletedTask);
+
+            var result = await _controller.Update(existingProducto) as JsonResult;
+
+            var jsonValue = result.Value;
+            var successProperty = jsonValue.GetType().GetProperty("success");
+            var successValue = successProperty.GetValue(jsonValue, null);
+
+            Assert.NotNull(result);
+            Assert.True((bool)successValue);
+        }
+
+
+        [Fact]
+        public async Task Delete_RemoveProduct()
+        {
+            var productToDelete = new Producto { Id = 1, Nombre = "Camiseta", Talla = 10, Color = "Rojo", Precio = 100, Descripcion = "Camiseta de tirantes" };
+
             _mockUnitWork.Setup(repo => repo.Producto.GetById(productToDelete.Id)).ReturnsAsync(productToDelete);
 
             var result = await _controller.Delete(productToDelete.Id);
@@ -72,6 +84,7 @@ namespace TiendaRopa.Tests.Controllers
             var jsonValue = jsonResult.Value;
             var successProperty = jsonValue.GetType().GetProperty("success");
             var successValue = successProperty.GetValue(jsonValue, null);
+
             Assert.True((bool)successValue);
         }
     }
